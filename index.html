@@ -8,16 +8,15 @@
 <title>Dial</title>
 <style>
   body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;
-       justify-content:center;gap:16px;padding:16px;font:17px -apple-system,system-ui,sans-serif;
-       background:#f4f2ed;color:#151c22;text-align:center}
-  a.btn{display:inline-block;padding:16px 28px;border-radius:999px;background:#1d5f72;
-        color:#fff;font-weight:700;text-decoration:none;font-size:20px}
-  .hint{font-size:13px;color:#7d8a92;max-width:32ch}
+       justify-content:center;gap:14px;padding:16px;font:17px -apple-system,system-ui,sans-serif;
+       background:#f4f2ed;color:#4d5a63;text-align:center}
+  #go{color:#1d5f72;font-weight:600;font-size:15px}
+  .hint{font-size:13px;color:#7d8a92}
 </style>
 </head>
 <body>
   <p id="msg">Opening Phone…</p>
-  <a id="go" class="btn" href="#" hidden>Call</a>
+  <a id="go" href="#" hidden>Didn't open? Tap to call</a>
   <p class="hint">Close this tab when you're done.</p>
 <script>
   // Link format: https://nigh8mare.github.io/dial/#tel:9494134026  (or #sms:9494134026)
@@ -27,13 +26,12 @@
   var digits = h.replace(/^(tel|sms):/i, "").replace(/\D/g, "").slice(-10);
   var msg = document.getElementById("msg"), go = document.getElementById("go");
   if (digits.length === 10) {
-    var pretty = digits.slice(0,3) + "-" + digits.slice(3,6) + "-" + digits.slice(6);
     var url = kind + ":+1" + digits;
-    go.href = url;
-    go.textContent = (kind === "sms" ? "Text " : "Call ") + pretty;
-    go.hidden = false;
     msg.textContent = kind === "sms" ? "Opening Messages…" : "Opening Phone…";
-    location.href = url;
+    go.href = url;
+    if (kind === "sms") go.textContent = "Didn't open? Tap to text";
+    location.href = url;                                   // iPhone's own prompt appears
+    setTimeout(function(){ go.hidden = false; }, 3000);   // small backup link only
   } else {
     msg.textContent = "No phone number in this link.";
   }
