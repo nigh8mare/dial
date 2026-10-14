@@ -33,10 +33,12 @@ final class WebModel: NSObject, ObservableObject {
         config.allowsInlineMediaPlayback = true
         config.mediaTypesRequiringUserActionForPlayback = []
         config.preferences.javaScriptCanOpenWindowsAutomatically = true
-        config.applicationNameForUserAgent = "Version/17.0 Mobile/15E148 Safari/604.1"
 
         webView = WKWebView(frame: .zero, configuration: config)
         super.init()
+        // claude.ai treats the bare WKWebView agent as an unknown browser; a
+        // Mobile Safari string gets the normal site.
+        webView.customUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
         bridge.owner = self
         recorder.send = { [weak self] event in self?.sendToPage(event) }
 
@@ -72,6 +74,8 @@ final class WebModel: NSObject, ObservableObject {
         available: true, version: 1,
         start: function(vid, name){ post({cmd: "start", vid: String(vid || ""), name: String(name || "")}); },
         stop: function(){ post({cmd: "stop"}); },
+        call: function(n){ post({cmd: "call", number: String(n || "")}); },
+        text: function(n){ post({cmd: "text", number: String(n || "")}); },
         status: function(){ post({cmd: "status"}); },
         pending: function(){ post({cmd: "pending"}); },
         ack: function(id){ post({cmd: "ack", id: String(id || "")}); }
@@ -98,6 +102,12 @@ final class WebModel: NSObject, ObservableObject {
             recorder.deliverPending()
         case "ack":
             recorder.acknowledge(id: body["id"] as? String ?? "")
+        case "call", "text":
+            // the page hands the number over directly; no tel: navigation,
+            // which the artifact frame would swallow
+            let digits = (body["number"] as? String ?? "").filter(\.isNumber)
+            guard digits.count >= 7, let url = URL(string: (cmd == "call" ? "tel:" : "sms:") + digits) else { return }
+            openOutside(url)
         default:
             break
         }

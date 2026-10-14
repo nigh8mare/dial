@@ -12,7 +12,7 @@ targets:
       - Sources
       - Resources
     info:
-      path: Sources/Info.plist
+      path: Info.plist
       properties:
         CFBundleDisplayName: Field Notes
         CFBundleShortVersionString: "1.0"

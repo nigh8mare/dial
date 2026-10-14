@@ -59,21 +59,24 @@ final class VisitRecorder: ObservableObject {
             let raw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt
             Task { @MainActor in self?.interrupted(ended: raw == AVAudioSession.InterruptionType.ended.rawValue) }
         }
-        // anything the app was quit in the middle of transcribing
-        for item in items where item.text == nil && item.failed == nil {
-            transcribe(item)
-        }
+        // Recordings the app was quit in the middle of are picked up when the
+        // page asks for pending items, so the speech permission prompt never
+        // appears at launch on its own.
     }
 
     // MARK: - Recording
 
+    private var starting = false
+
     func start(vid: String, name: String) {
-        if isRecording {
+        if isRecording || starting {
             send?(["type": "error", "vid": vid, "message": "Already recording \(patientName). Stop that one first."])
             return
         }
+        starting = true
         AVAudioSession.sharedInstance().requestRecordPermission { granted in
             Task { @MainActor in
+                self.starting = false
                 if granted {
                     self.begin(vid: vid, name: name)
                 } else {
@@ -261,15 +264,16 @@ final class VisitRecorder: ObservableObject {
         // keep patient audio on the phone when the phone can do it itself
         if recognizer.supportsOnDeviceRecognition { request.requiresOnDeviceRecognition = true }
 
+        final class Once { var done = false }
+        let once = Once()
         return try await withCheckedThrowingContinuation { continuation in
-            var resumed = false
             recognizer.recognitionTask(with: request) { result, error in
-                if resumed { return }
+                if once.done { return }
                 if let result, result.isFinal {
-                    resumed = true
+                    once.done = true
                     continuation.resume(returning: result.bestTranscription.formattedString)
                 } else if let error {
-                    resumed = true
+                    once.done = true
                     let code = (error as NSError).code
                     // 1110 / 203: nothing said in this stretch, which is fine
                     if code == 1110 || code == 203 {
