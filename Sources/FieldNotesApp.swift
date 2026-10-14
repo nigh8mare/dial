@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct FieldVisitLogApp: App {
+struct FieldNotesApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()

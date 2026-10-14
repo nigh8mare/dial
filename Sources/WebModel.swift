@@ -5,7 +5,7 @@ import WebKit
 /// Holds the one web view the app runs the log in.
 ///
 /// The log itself (visits, patients, notes, Check email, the Gaya report,
-/// chat, voice memos) is the Field Visit Log page on claude.ai. Running that
+/// chat, voice memos) is the Field Notes page on claude.ai. Running that
 /// page here, rather than rebuilding it, is what keeps every feature working:
 /// the Claude write-ups, the Gmail check and the synced data all live behind
 /// your claude.ai sign-in. What the app adds is what a web page can't do on

@@ -1,11 +1,11 @@
-name: FieldVisitLog
+name: FieldNotes
 options:
   bundleIdPrefix: com.rbriana
   deploymentTarget:
     iOS: "16.0"
   createIntermediateGroups: true
 targets:
-  FieldVisitLog:
+  FieldNotes:
     type: application
     platform: iOS
     sources:
@@ -14,7 +14,7 @@ targets:
     info:
       path: Sources/Info.plist
       properties:
-        CFBundleDisplayName: Visit Log
+        CFBundleDisplayName: Field Notes
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "1"
         UILaunchScreen:
@@ -23,15 +23,15 @@ targets:
           - UIInterfaceOrientationPortrait
         UIApplicationSupportsIndirectInputEvents: true
         NSMicrophoneUsageDescription: Record voice memos about a visit and attach them to that visit.
-        NSSpeechRecognitionUsageDescription: Turn your visit recordings into text so Visit Scribe can draft the visit note.
+        NSSpeechRecognitionUsageDescription: Turn your visit recordings into text so Field Notes can draft the visit note.
         UIBackgroundModes:
           - audio
         NSCameraUsageDescription: Take a photo to attach to a visit.
         NSPhotoLibraryUsageDescription: Attach a photo or recording from your library to a visit.
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.rbriana.fieldvisitlog
-        PRODUCT_NAME: VisitLog
+        PRODUCT_BUNDLE_IDENTIFIER: com.rbriana.fieldnotes
+        PRODUCT_NAME: FieldNotes
         TARGETED_DEVICE_FAMILY: "1"
         SWIFT_VERSION: "5.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

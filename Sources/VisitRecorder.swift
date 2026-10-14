@@ -5,7 +5,7 @@ import Speech
 /// Records a visit with the phone's own recorder, so it keeps going with the
 /// screen locked or another app open, then transcribes it on the phone.
 ///
-/// The transcript is handed to the log page, where the Visit Scribe agent
+/// The transcript is handed to the log page, where Field Notes
 /// drafts the visit note from it. Until the page confirms it has the
 /// transcript, it is kept here, so nothing is lost if the page was closed
 /// or the app was quit mid-way. The audio file is deleted once the page has it.
@@ -78,7 +78,7 @@ final class VisitRecorder: ObservableObject {
                     self.begin(vid: vid, name: name)
                 } else {
                     self.send?(["type": "error", "vid": vid,
-                                "message": "The microphone is off for Visit Log. Turn it on in Settings › Visit Log."])
+                                "message": "The microphone is off for Field Notes. Turn it on in Settings › Field Notes."])
                 }
             }
         }
@@ -187,7 +187,7 @@ final class VisitRecorder: ObservableObject {
             Task { @MainActor in
                 guard auth == .authorized else {
                     self.finish(item, text: nil,
-                                error: "Speech recognition is off for Visit Log. Turn it on in Settings › Visit Log.")
+                                error: "Speech recognition is off for Field Notes. Turn it on in Settings › Field Notes.")
                     return
                 }
                 do {
